@@ -4,6 +4,8 @@ import UserAgent from 'user-agents';
 
 const SPIN_INSTANCE_ID = '4dd6yg'
 
+let gamesPlayed = 0;
+let gamesWon = 0;
 const specialFormatTime = () => {
     const now = new Date();
 
@@ -42,7 +44,7 @@ class Wheel {
                 const html = resp.text;
                 this.pid = html.split('&pid=')[1].split('"')[0];
 
-                print(`Created new wheel instance: ${this.finalId} (${this.pid})`);
+                // print(`Created new wheel instance: ${this.finalId} (${this.pid})`);
 
                 return resolve(this.finalId);
             })
@@ -70,14 +72,18 @@ class Wheel {
                 const destination = spinDestinationArray.pop() - 1;
                 const actualLanding = segmentValuesArray[destination];
 
+                gamesPlayed++;
+
                 // boolean and string lovely
                 if (actualLanding.win === 'lose') {
-                    print(`Wheel was a loser :(`)   
+                    // print(`Wheel was a loser :(`)   
                     return resolve();
                 }
 
+                gamesWon++;
+
                 const fancyRewardName = actualLanding.resultText.replace(/\^/g, ' ')
-                print(`Wheel ${this.finalId} won ${fancyRewardName}`)
+                print(`Wheel ${this.finalId} won ${fancyRewardName} (${gamesWon}/${gamesPlayed} ~${Math.round(gamesWon / gamesPlayed * 10000) / 100}%)`)
 
                 return resolve(fancyRewardName);
             })
